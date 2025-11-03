@@ -16,10 +16,21 @@ const app = express();
 
 const PORT: number = parseInt(process.env.PORT!) || 8085;
 
+const allowedOrigins = [
+  "https://nextjs-vendor-app.vercel.app", // production frontend (Vercel)
+  "http://localhost:3000", // local dev frontend
+];
+
 //middlewares
 app.use(
   cors({
-    origin: APP_ORIGIN,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );

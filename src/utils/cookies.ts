@@ -3,13 +3,14 @@ import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 import { NODE_ENV } from "./env";
 
 const secure = process.env.NODE_ENV !== "development";
+const isProduction = NODE_ENV === "production";
 
 export const REFRESH_PATH = "/auth/refresh";
 
 const defaults: CookieOptions = {
-  sameSite: NODE_ENV === "production" ? "strict" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   httpOnly: true,
-  secure,
+  secure: isProduction,
 };
 
 export const getAccessTokenCookieOptions = () => ({
