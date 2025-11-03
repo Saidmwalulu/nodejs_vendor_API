@@ -1,4 +1,3 @@
-import { path } from 'path';
 import { CookieOptions, Response } from "express";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 import { NODE_ENV } from "./env";
