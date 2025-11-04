@@ -42,10 +42,12 @@ export const createUserController = asyncHandler(
 
     logger.info(`${user.name} account created @ ${user.createdAt}`);
 
-    setAuthCookies({ res, accessToken, refreshToken }).status(201).json({
+    res.status(201).json({
       success: true,
-      message: "user created successfully",
-      data: user,
+      message: "login successfully",
+      user,
+      accessToken,
+      refreshToken,
     });
   }
 );
@@ -58,10 +60,12 @@ export const loginUserController = asyncHandler(
 
     logger.info(`${user.name} logged in successful with ${user.email}`);
 
-    setAuthCookies({ res, accessToken, refreshToken }).status(201).json({
+    res.status(201).json({
       success: true,
       message: "login successfully",
-      user: user,
+      user,
+      accessToken,
+      refreshToken,
     });
   }
 );
@@ -106,20 +110,32 @@ export const changePasswordController = asyncHandler(
 
 export const logoutController = asyncHandler(
   async (req: Request, res: Response) => {
-    const accessToken = (req.cookies.accessToken as string) || undefined;
-    const { payload } = verifyToken(accessToken || "");
-    if (payload) {
-      await prisma.session.delete({
-        where: {
-          id: payload.sessionId,
-        },
-      });
-    }
-    logger.info(`logout successful`);
+    const authHeader = req.headers.authorization;
 
-    clearAuthCookies(res)
-      .status(200)
-      .json({ success: true, message: "logout successfully" });
+    // Check for bearer token
+    const accessToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
+
+    if (accessToken) {
+      try {
+        const { payload } = verifyToken(accessToken);
+        if (payload?.sessionId) {
+          await prisma.session.delete({
+            where: { id: payload.sessionId },
+          });
+        }
+      } catch (err) {
+        console.error("Invalid token during logout:", err);
+      }
+    }
+
+    logger.info(`Logout successful`);
+
+    res.status(200).json({
+      success: true,
+      message: "Logout successfully",
+    });
   }
 );
 
