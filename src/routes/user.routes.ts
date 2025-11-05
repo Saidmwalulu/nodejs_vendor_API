@@ -26,7 +26,7 @@ userRoutes.post("/login", loginUserController);
 userRoutes.get("/me", authenticate, getUserController);
 userRoutes.post("/changename", authenticate, changeNameController);
 userRoutes.post("/changepassword", authenticate, changePasswordController);
-userRoutes.get("/logout", authenticate, logoutController);
+userRoutes.post("/logout", authenticate, logoutController);
 userRoutes.get("/refresh", refreshController);
 userRoutes.get("/email/verify/:code", verifyEmailController);
 userRoutes.get(
