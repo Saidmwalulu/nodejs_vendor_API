@@ -68,7 +68,7 @@ app.use("/category", categoryRoutes);
 app.use("/sub-category", subCategoryRoutes);
 app.use("/store", storeRoutes);
 
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
